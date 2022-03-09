@@ -197,24 +197,24 @@ app$layout(
           )
         ),
         id = "nav-back"
-      ),
+      )#,
       # Charts
-      dbcContainer(
-        list(
-          dbcRow(
-            list(
-              dbcCol(
-                list(
-                  htmlLabel("Blooming timeline"),
-                  dccGraph(
-                    id = "timeline"
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
+      # dbcContainer(
+      #   list(
+      #     dbcRow(
+      #       list(
+      #         dbcCol(
+      #           list(
+      #             htmlLabel("Blooming timeline"),
+      #             dccGraph(
+      #               id = "timeline"
+      #             )
+      #           )
+      #         )
+      #       )
+      #     )
+      #   )
+      # )
     ),
     id = "content"
   )
@@ -222,81 +222,81 @@ app$layout(
 
 # Chart function
 
-timeline_plot <- function(trees_timeline) {
-  trees_timeline <- trees_timeline %>%
-    filter_at(vars(BLOOM_START, BLOOM_END), any_vars(!is.na(.))) %>%
-    distinct(CULTIVAR_NAME, .keep_all = TRUE) %>%
-    select(CULTIVAR_NAME, BLOOM_START, BLOOM_END)
+# timeline_plot <- function(trees_timeline) {
+#   trees_timeline <- trees_timeline %>%
+#     filter_at(vars(BLOOM_START, BLOOM_END), any_vars(!is.na(.))) %>%
+#     distinct(CULTIVAR_NAME, .keep_all = TRUE) %>%
+#     select(CULTIVAR_NAME, BLOOM_START, BLOOM_END)
+# 
+#   trees_timeline <- trees_timeline %>%
+#     gather(key = date_type, value = date, -CULTIVAR_NAME) %>%
+#     inner_join(trees_timeline, by = "CULTIVAR_NAME") %>%
+#     rename(Start = BLOOM_START, End = BLOOM_END)
+# 
+#   p <- ggplot() +
+#     geom_line(data = trees_timeline, aes(x = date, y = reorder(CULTIVAR_NAME, -as.numeric(Start)), size = "blue", color = "blue")) +
+#     scale_color_manual(values = c("#F3B2D2")) +
+#     scale_x_date(position = "top") +
+#     theme_classic() +
+#     theme(legend.position = "none") +
+#     theme(
+#       axis.title.x = element_blank(),
+#       axis.title.y = element_blank(),
+#       axis.line=element_blank()
+#     )
+# 
+#   p <- ggplotly(p + aes(Start = Start, End = End), tooltip = c("Start", "End")) %>% 
+#     layout(xaxis = list(side = "top"))
+# 
+#   return(p)
+# }
 
-  trees_timeline <- trees_timeline %>%
-    gather(key = date_type, value = date, -CULTIVAR_NAME) %>%
-    inner_join(trees_timeline, by = "CULTIVAR_NAME") %>%
-    rename(Start = BLOOM_START, End = BLOOM_END)
-
-  p <- ggplot() +
-    geom_line(data = trees_timeline, aes(x = date, y = reorder(CULTIVAR_NAME, -as.numeric(Start)), size = "blue", color = "blue")) +
-    scale_color_manual(values = c("#F3B2D2")) +
-    scale_x_date(position = "top") +
-    theme_classic() +
-    theme(legend.position = "none") +
-    theme(
-      axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
-      axis.line=element_blank()
-    )
-
-  p <- ggplotly(p + aes(Start = Start, End = End), tooltip = c("Start", "End")) %>% 
-    layout(xaxis = list(side = "top"))
-
-  return(p)
-}
-
-app$callback(
-  output("timeline", "figure"),
-  list(
-    input("picker_date", "start_date"),
-    input("picker_date", "end_date"),
-    input("filter_cultivar", "value")
-  ),
-  function(start_date, end_date, cultivar) {
-    # Date input Cleanup
-    
-    # 
-    # if (start_date == "None") {
-    #   start_date <- "2022-01-01"
-    # }
-    #
-    # if (end_date == "None") {
-    #   end_date <- "2022-05-30"
-    # }
-
-    # start_date <- as.Date(start_date)
-    # end_date <- as.Date(end_date)
-
-    filtered_trees <- raw_trees
-
-    # Filter by date
-
-    filtered_trees <- filtered_trees %>%
-      filter(
-        ((BLOOM_START <= start_date) & (BLOOM_END >= start_date)) |
-          ((BLOOM_START <= end_date) & (BLOOM_END >= end_date)) |
-          ((BLOOM_START <= end_date) & (BLOOM_START >= start_date)) |
-          ((BLOOM_END <= end_date) & (BLOOM_END >= start_date))
-      )
-
-    # Filter by cultivar
-    
-    if (cultivar != "all_cultivars") {
-      filtered_trees <- filtered_trees %>%
-        filter(CULTIVAR_NAME == cultivar)
-    }
-
-    timeline <- timeline_plot(filtered_trees)
-
-    return(timeline)
-  }
-)
+# app$callback(
+#   output("timeline", "figure"),
+#   list(
+#     input("picker_date", "start_date"),
+#     input("picker_date", "end_date"),
+#     input("filter_cultivar", "value")
+#   ),
+#   function(start_date, end_date, cultivar) {
+#     # Date input Cleanup
+#     
+#     # 
+#     # if (start_date == "None") {
+#     #   start_date <- "2022-01-01"
+#     # }
+#     #
+#     # if (end_date == "None") {
+#     #   end_date <- "2022-05-30"
+#     # }
+# 
+#     # start_date <- as.Date(start_date)
+#     # end_date <- as.Date(end_date)
+# 
+#     filtered_trees <- raw_trees
+# 
+#     # Filter by date
+# 
+#     filtered_trees <- filtered_trees %>%
+#       filter(
+#         ((BLOOM_START <= start_date) & (BLOOM_END >= start_date)) |
+#           ((BLOOM_START <= end_date) & (BLOOM_END >= end_date)) |
+#           ((BLOOM_START <= end_date) & (BLOOM_START >= start_date)) |
+#           ((BLOOM_END <= end_date) & (BLOOM_END >= start_date))
+#       )
+# 
+#     # Filter by cultivar
+#     
+#     if (cultivar != "all_cultivars") {
+#       filtered_trees <- filtered_trees %>%
+#         filter(CULTIVAR_NAME == cultivar)
+#     }
+# 
+#     timeline <- timeline_plot(filtered_trees)
+# 
+#     return(timeline)
+#   }
+# )
 
 app$callback(
   output("simple-toast", "is_open"),
