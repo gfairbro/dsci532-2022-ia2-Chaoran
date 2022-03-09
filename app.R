@@ -7,11 +7,11 @@ library(ggplot2)
 library(plotly)
 
 # Data (wrangled)
-raw_trees <- read_csv("data/processed_trees.csv")
-raw_trees$BLOOM_START <- as.Date(raw_trees$BLOOM_START, format = "%d /%m /%Y")
-raw_trees$BLOOM_END <- as.Date(raw_trees$BLOOM_END, format = "%d /%m /%Y")
-raw_trees$CULTIVAR_NAME <- str_to_title(raw_trees$CULTIVAR_NAME)
-raw_trees$COMMON_NAME <- str_to_title(raw_trees$COMMON_NAME)
+# raw_trees <- read_csv("data/processed_trees.csv")
+# raw_trees$BLOOM_START <- as.Date(raw_trees$BLOOM_START, format = "%d /%m /%Y")
+# raw_trees$BLOOM_END <- as.Date(raw_trees$BLOOM_END, format = "%d /%m /%Y")
+# raw_trees$CULTIVAR_NAME <- str_to_title(raw_trees$CULTIVAR_NAME)
+# raw_trees$COMMON_NAME <- str_to_title(raw_trees$COMMON_NAME)
 
 # Setup app and layout/frontend
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
@@ -38,58 +38,58 @@ navbar <- dbcNavbarSimple(
 )
 
 # Set option list for menu filters
-option_indicator <- function(available_indicators) {
-  lapply(
-    available_indicators,
-    function(available_indicator) {
-      list(
-        label = available_indicator,
-        value = available_indicator
-      )
-    }
-  )
-}
+# option_indicator <- function(available_indicators) {
+#   lapply(
+#     available_indicators,
+#     function(available_indicator) {
+#       list(
+#         label = available_indicator,
+#         value = available_indicator
+#       )
+#     }
+#   )
+# }
 
 # Menu filters
-date_picker <- dccDatePickerRange(
-  id = "picker_date",
-  start_date = as.Date("01/01/2022", format = "%d /%m /%Y"),
-  end_date = as.Date("30/05/2022", format = "%d /%m /%Y"),
-  min_date_allowed = as.Date("01/01/2022", format = "%d /%m /%Y"),
-  max_date_allowed = as.Date("30/05/2022", format = "%d /%m /%Y"),
-  start_date_placeholder_text = "Start date",
-  end_date_placeholder_text = "End date",
-)
-
-drop_hood <- dccDropdown(
-  id = "filter_neighbourhood",
-  value = "all_neighbourhoods",
-  options = c(
-    list(list(label = "All neighbourhoods", value = "all_neighbourhoods")),
-    option_indicator(unique(raw_trees$NEIGHBOURHOOD_NAME))
-  )
-)
-
-drop_cultivar <- dccDropdown(
-  id = "filter_cultivar",
-  value = "all_cultivars",
-  options = c(
-    list(list(label = "All cultivars", value = "all_cultivars")),
-    option_indicator(unique(raw_trees$CULTIVAR_NAME))
-  )
-)
-
-range_slider <- dccRangeSlider(
-  id = "slider_diameter",
-  min = 0,
-  max = 150,
-  value = list(0, 100),
-  marks = list(
-    "0" = "0cm",
-    "150" = "150cm"
-  ),
-  tooltip = list(placement = "bottom", always_visible = TRUE),
-)
+# date_picker <- dccDatePickerRange(
+#   id = "picker_date",
+#   start_date = as.Date("01/01/2022", format = "%d /%m /%Y"),
+#   end_date = as.Date("30/05/2022", format = "%d /%m /%Y"),
+#   min_date_allowed = as.Date("01/01/2022", format = "%d /%m /%Y"),
+#   max_date_allowed = as.Date("30/05/2022", format = "%d /%m /%Y"),
+#   start_date_placeholder_text = "Start date",
+#   end_date_placeholder_text = "End date",
+# )
+# 
+# drop_hood <- dccDropdown(
+#   id = "filter_neighbourhood",
+#   value = "all_neighbourhoods",
+#   options = c(
+#     list(list(label = "All neighbourhoods", value = "all_neighbourhoods")),
+#     option_indicator(unique(raw_trees$NEIGHBOURHOOD_NAME))
+#   )
+# )
+# 
+# drop_cultivar <- dccDropdown(
+#   id = "filter_cultivar",
+#   value = "all_cultivars",
+#   options = c(
+#     list(list(label = "All cultivars", value = "all_cultivars")),
+#     option_indicator(unique(raw_trees$CULTIVAR_NAME))
+#   )
+# )
+# 
+# range_slider <- dccRangeSlider(
+#   id = "slider_diameter",
+#   min = 0,
+#   max = 150,
+#   value = list(0, 100),
+#   marks = list(
+#     "0" = "0cm",
+#     "150" = "150cm"
+#   ),
+#   tooltip = list(placement = "bottom", always_visible = TRUE),
+# )
 
 app$layout(
   dbcContainer(
@@ -127,77 +127,77 @@ app$layout(
         icon = "primary",
         dismissable = TRUE,
         is_open = FALSE
-      ),
-      # Logo
-      dbcContainer(
-        dbcContainer(
-          list(
-            dbcRow(
-              list(
-                dbcCol(
-                  htmlDiv(
-                    htmlImg(src = "assets/logo.png", height = "70px")
-                  ),
-                  id = "logo-img",
-                  width = 1,
-                  style = list("padding-top" = "5px")
-                ),
-                dbcCol(
-                  navbar,
-                  style = list(padding = "0"),
-                  width = 11
-                )
-              )
-            )
-          ),
-          id = "header"
-        ),
-        id = "header-back"
-      ),
-      # Navigation Background
-      dbcContainer(
-        list(
-          # Menu bar
-          dbcContainer(
-            list(
-              dbcRow(
-                list(
-                  dbcCol(
-                    list(
-                      htmlLabel("Bloom date"),
-                      date_picker
-                    ),
-                    width = 3
-                  ),
-                  dbcCol(
-                    list(
-                      htmlLabel("Neighbourhood"),
-                      drop_hood
-                    ),
-                    width = 3
-                  ),
-                  dbcCol(
-                    list(
-                      htmlLabel("Tree cultivar (type)"),
-                      drop_cultivar
-                    ),
-                    width = 3
-                  ),
-                  dbcCol(
-                    list(
-                      htmlLabel("Tree diameter"),
-                      range_slider
-                    ),
-                    width = 3
-                  )
-                ),
-                id = "menu-bar"
-              )
-            )
-          )
-        ),
-        id = "nav-back"
       )#,
+      # Logo
+      # dbcContainer(
+      #   dbcContainer(
+      #     list(
+      #       dbcRow(
+      #         list(
+      #           dbcCol(
+      #             htmlDiv(
+      #               htmlImg(src = "assets/logo.png", height = "70px")
+      #             ),
+      #             id = "logo-img",
+      #             width = 1,
+      #             style = list("padding-top" = "5px")
+      #           ),
+      #           dbcCol(
+      #             navbar,
+      #             style = list(padding = "0"),
+      #             width = 11
+      #           )
+      #         )
+      #       )
+      #     ),
+      #     id = "header"
+      #   ),
+      #   id = "header-back"
+      # ),
+      # # Navigation Background
+      # dbcContainer(
+      #   list(
+      #     # Menu bar
+      #     dbcContainer(
+      #       list(
+      #         dbcRow(
+      #           list(
+      #             dbcCol(
+      #               list(
+      #                 htmlLabel("Bloom date"),
+      #                 date_picker
+      #               ),
+      #               width = 3
+      #             ),
+      #             dbcCol(
+      #               list(
+      #                 htmlLabel("Neighbourhood"),
+      #                 drop_hood
+      #               ),
+      #               width = 3
+      #             ),
+      #             dbcCol(
+      #               list(
+      #                 htmlLabel("Tree cultivar (type)"),
+      #                 drop_cultivar
+      #               ),
+      #               width = 3
+      #             ),
+      #             dbcCol(
+      #               list(
+      #                 htmlLabel("Tree diameter"),
+      #                 range_slider
+      #               ),
+      #               width = 3
+      #             )
+      #           ),
+      #           id = "menu-bar"
+      #         )
+      #       )
+      #     )
+      #   ),
+      #   id = "nav-back"
+      # )#,
       # Charts
       # dbcContainer(
       #   list(
