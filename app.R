@@ -7,7 +7,7 @@ library(ggplot2)
 library(plotly)
 
 # Data (wrangled)
-# raw_trees <- read_csv("data/processed_trees.csv")
+# raw_trees <- readr::read_csv(here::here('data', 'processed_trees.csv'))
 # raw_trees$BLOOM_START <- as.Date(raw_trees$BLOOM_START, format = "%d /%m /%Y")
 # raw_trees$BLOOM_END <- as.Date(raw_trees$BLOOM_END, format = "%d /%m /%Y")
 # raw_trees$CULTIVAR_NAME <- str_to_title(raw_trees$CULTIVAR_NAME)
@@ -49,8 +49,8 @@ navbar <- dbcNavbarSimple(
 #     }
 #   )
 # }
-
-# Menu filters
+# 
+# # Menu filters
 # date_picker <- dccDatePickerRange(
 #   id = "picker_date",
 #   start_date = as.Date("01/01/2022", format = "%d /%m /%Y"),
@@ -127,33 +127,33 @@ app$layout(
         icon = "primary",
         dismissable = TRUE,
         is_open = FALSE
-      )#,
+      ),
       # Logo
-      # dbcContainer(
-      #   dbcContainer(
-      #     list(
-      #       dbcRow(
-      #         list(
-      #           dbcCol(
-      #             htmlDiv(
-      #               htmlImg(src = "assets/logo.png", height = "70px")
-      #             ),
-      #             id = "logo-img",
-      #             width = 1,
-      #             style = list("padding-top" = "5px")
-      #           ),
-      #           dbcCol(
-      #             navbar,
-      #             style = list(padding = "0"),
-      #             width = 11
-      #           )
-      #         )
-      #       )
-      #     ),
-      #     id = "header"
-      #   ),
-      #   id = "header-back"
-      # ),
+      dbcContainer(
+        dbcContainer(
+          list(
+            dbcRow(
+              list(
+                dbcCol(
+                  htmlDiv(
+                    htmlImg(src = "assets/logo.png", height = "70px")
+                  ),
+                  id = "logo-img",
+                  width = 1,
+                  style = list("padding-top" = "5px")
+                ),
+                dbcCol(
+                  navbar,
+                  style = list(padding = "0"),
+                  width = 11
+                )
+              )
+            )
+          ),
+          id = "header"
+        ),
+        id = "header-back"
+      )#,
       # # Navigation Background
       # dbcContainer(
       #   list(
